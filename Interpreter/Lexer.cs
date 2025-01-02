@@ -43,6 +43,12 @@ namespace Interpreter
         '+' => new Token(TokenType.PLUS, _char.ToString()),
         '{' => new Token(TokenType.LBRACE, _char.ToString()),
         '}' => new Token(TokenType.RBRACE, _char.ToString()),
+        '-' => new Token(TokenType.MINUS, _char.ToString()),
+        '!' => new Token(TokenType.BANG, _char.ToString()),
+        '*' => new Token(TokenType.ASTERISK, _char.ToString()),
+        '/' => new Token(TokenType.SLASH, _char.ToString()),
+        '<' => new Token(TokenType.LT, _char.ToString()),
+        '>' => new Token(TokenType.GT, _char.ToString()),
         // 0  means NUL
         (char)0 => new Token(TokenType.EOF, ""),
         _ => ReadOther()

@@ -18,6 +18,11 @@ namespace Interpreter
     // Keywords
     FUNCTION,
     LET,
+    TRUE,
+    FALSE,
+    IF,
+    ELSE,
+    RETURN,
 
     // Identifiers + literals
     INT, // 132153
@@ -30,6 +35,12 @@ namespace Interpreter
     // Operators
     ASSIGN,
     PLUS,
+    MINUS,
+    BANG,
+    ASTERISK,
+    SLASH,
+    LT,
+    GT,
 
     // Delimiters
     COMMA,
