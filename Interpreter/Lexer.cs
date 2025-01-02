@@ -89,6 +89,11 @@ namespace Interpreter
       {
         "let" => new Token(TokenType.LET, literal),
         "fn" => new Token(TokenType.FUNCTION, literal),
+        "if" => new Token(TokenType.IF, literal),
+        "else" => new Token(TokenType.ELSE, literal),
+        "true" => new Token(TokenType.TRUE, literal),
+        "false" => new Token(TokenType.FALSE, literal),
+        "return" => new Token(TokenType.RETURN, literal),
         _ => new Token(TokenType.IDENT, literal)
       };
     }
