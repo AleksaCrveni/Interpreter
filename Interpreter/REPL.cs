@@ -31,6 +31,7 @@ namespace Interpreter
       span = _buffer.AsSpan();
       while (!end)
       {       
+        _stdIn.Read(_buffer, offset, size);
         ind = span.IndexOfNewLine();
         if (ind != -1)
           input = Encoding.Default.GetString(span.Slice(0, ind));
