@@ -15,29 +15,32 @@ namespace Interpreter
   }
   public enum TokenType
   {
-     ILLEGAL,
-     EOF,
+    // Keywords
+    FUNCTION,
+    LET,
 
-     // Identifiers + literals
-     IDENT, // add, foobar, x, y
-     INT, // 132153
+    // Identifiers + literals
+    INT, // 132153
+    IDENT, // add, foobar, x, y
+   
 
-     // Operators
-     ASSIGN,
-     PLUS,
+    ILLEGAL,
+    EOF,
 
-     // Delimiters
-     COMMA,
-     SEMICOLON,
+    // Operators
+    ASSIGN,
+    PLUS,
 
-     LPAREN,
-     RPAREN,
-     LBRACE,
-     RBRACE,
+    // Delimiters
+    COMMA,
+    SEMICOLON,
 
-     // Keywords
-     FUNCTION,
-     LET
+    LPAREN,
+    RPAREN,
+    LBRACE,
+    RBRACE,
+
+    
   }
   public static class Helpers
   {
