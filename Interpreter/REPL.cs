@@ -12,7 +12,7 @@ namespace Interpreter
     private Stream _stdIn;
     private byte[] _buffer;
     int offset = 0;
-    int size = 10;
+    int size = 1024;
     // Not sure if this is right approach
     StringBuilder _sb;
     public REPL(Stream _in)
