@@ -33,32 +33,35 @@ namespace Interpreter
     public Token NextToken()
     {
       SkipWhitespace();
-      Token t = _char switch
+      (Token t, bool next) = _char switch
       {
-        '=' => new Token(TokenType.ASSIGN, _char.ToString()),
-        ';' => new Token(TokenType.SEMICOLON, _char.ToString()),
-        '(' => new Token(TokenType.LPAREN, _char.ToString()),
-        ')' => new Token(TokenType.RPAREN, _char.ToString()),
-        ',' => new Token(TokenType.COMMA, _char.ToString()),
-        '+' => new Token(TokenType.PLUS, _char.ToString()),
-        '{' => new Token(TokenType.LBRACE, _char.ToString()),
-        '}' => new Token(TokenType.RBRACE, _char.ToString()),
-        '-' => new Token(TokenType.MINUS, _char.ToString()),
-        '!' => new Token(TokenType.BANG, _char.ToString()),
-        '*' => new Token(TokenType.ASTERISK, _char.ToString()),
-        '/' => new Token(TokenType.SLASH, _char.ToString()),
-        '<' => new Token(TokenType.LT, _char.ToString()),
-        '>' => new Token(TokenType.GT, _char.ToString()),
+        '=' => (ReadDoubleCharOperator(), false),
+        ';' => (new Token(TokenType.SEMICOLON, _char.ToString()), true),
+        '(' => (new Token(TokenType.LPAREN, _char.ToString()), true),
+        ')' => (new Token(TokenType.RPAREN, _char.ToString()), true),
+        ',' => (new Token(TokenType.COMMA, _char.ToString()), true),
+        '+' => (new Token(TokenType.PLUS, _char.ToString()), true),
+        '{' => (new Token(TokenType.LBRACE, _char.ToString()), true),
+        '}' => (new Token(TokenType.RBRACE, _char.ToString()), true),
+        '-' => (new Token(TokenType.MINUS, _char.ToString()), true),
+        '!' => (ReadDoubleCharOperator(), false),
+        '*' => (new Token(TokenType.ASTERISK, _char.ToString()), true),
+        '/' => (new Token(TokenType.SLASH, _char.ToString()), true),
+        '<' => (new Token(TokenType.LT, _char.ToString()), true),
+        '>' => (new Token(TokenType.GT, _char.ToString()), true),
         // 0  means NUL
-        (char)0 => new Token(TokenType.EOF, ""),
-        _ => ReadOther()
+        (char)0 => (new Token(TokenType.EOF, ""), true),
+        _ => (ReadOther(), false)
       };
-      // If its keyword or ident, no need to move next position because
-      // we did it in while loop in ReadIdentifier()
-      // for this to work we must put all of these before IDENT
-      // will change it later if it becomes messy
-      // more i look at this , it feels more stupid
-      if ((int)t.Type <= (int)TokenType.IDENT)
+      //// If its keyword or ident, no need to move next position because
+      //// we did it in while loop in ReadIdentifier()
+      //// for this to work we must put all of these before IDENT
+      //// will change it later if it becomes messy
+      //// more i look at this , it feels more stupid
+      //if ((int)t.Type <= (int)TokenType.IDENT)
+      //  return t;
+
+      if (!next)
         return t;
 
       ReadChar();
@@ -74,6 +77,24 @@ namespace Interpreter
         >= 'A' and <= 'Z' => ReadIdentifier(),
         >= '0' and <= '9' => ReadNumber(),
         _ => new Token(TokenType.ILLEGAL, _char.ToString())
+      };
+    }
+    public Token ReadDoubleCharOperator()
+    {
+      int starter = _position;
+      while (_char == '=' || _char == '!')
+      {
+        ReadChar();
+      }
+
+      string literal = _internal.Slice(starter, _position - starter).ToString();
+      return literal switch
+      {
+        "==" => new Token(TokenType.EQ, literal),
+        "!=" => new Token(TokenType.NOT_EQ, literal),
+        "=" => new Token(TokenType.ASSIGN, literal),
+        "!" => new Token(TokenType.BANG, literal),
+        _ => new Token(TokenType.ILLEGAL, literal)
       };
     }
 
