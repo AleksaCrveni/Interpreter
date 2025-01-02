@@ -11,8 +11,6 @@ namespace Interpreter
     // byte representation \r\n is 
     private static byte c1 = 13;
     private static byte c2 = 10;
-    private static byte c3 = 92;
-    private static byte c4 = 99;
     public static int IndexOfNewLine(this Span<byte> source)
     {
       // probably not most efficeint way but here we are
