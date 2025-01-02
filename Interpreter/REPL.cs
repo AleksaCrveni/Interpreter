@@ -29,8 +29,10 @@ namespace Interpreter
       int ind = 0;
       Span<byte> span = new Span<byte>();
       span = _buffer.AsSpan();
+      Lexer l;
+      Token t;
       while (!end)
-      {       
+      {
         _stdIn.Read(_buffer, offset, size);
         ind = span.IndexOfNewLine();
         if (ind != -1)
@@ -43,9 +45,14 @@ namespace Interpreter
           end = true;
           break;
         }
-        Console.WriteLine(input);
-      }
-
+        l = new Lexer(input);
+        t = l.NextToken();
+        while (t.Type != TokenType.EOF)
+        {
+          Console.WriteLine($"{{Type: {t.Type}. Literal: {t.Literal}}}");
+          t = l.NextToken();
+        }
+      }      
       Console.WriteLine("REPL closed");
       Console.ReadLine();
     }
