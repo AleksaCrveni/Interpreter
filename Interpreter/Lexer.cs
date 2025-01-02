@@ -57,6 +57,7 @@ namespace Interpreter
       // we did it in while loop in ReadIdentifier()
       // for this to work we must put all of these before IDENT
       // will change it later if it becomes messy
+      // more i look at this , it feels more stupid
       if ((int)t.Type <= (int)TokenType.IDENT)
         return t;
 
