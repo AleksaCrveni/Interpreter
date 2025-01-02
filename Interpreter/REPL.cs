@@ -14,12 +14,10 @@ namespace Interpreter
     int offset = 0;
     int size = 1024;
     // Not sure if this is right approach
-    StringBuilder _sb;
     public REPL(Stream _in)
     {
       _stdIn = _in;
       _buffer = new byte[size];
-      _sb = new StringBuilder();
     }
     public void Start()
     {
@@ -45,6 +43,7 @@ namespace Interpreter
           end = true;
           break;
         }
+
         l = new Lexer(input);
         t = l.NextToken();
         while (t.Type != TokenType.EOF)
