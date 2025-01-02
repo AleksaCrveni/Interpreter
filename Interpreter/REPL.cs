@@ -6,37 +6,42 @@ using System.Threading.Tasks;
 
 namespace Interpreter
 {
+  
   internal class REPL
   {
     private Stream _stdIn;
     private byte[] _buffer;
     int offset = 0;
-    int size = 4096;
+    int size = 10;
+    // Not sure if this is right approach
+    StringBuilder _sb;
     public REPL(Stream _in)
     {
       _stdIn = _in;
       _buffer = new byte[size];
+      _sb = new StringBuilder();
     }
     public void Start()
     {
       bool end = false;
       string input = "";
       Console.WriteLine("REPL started");
-      ReadOnlySpan<char> span;
+      int ind = 0;
+      Span<byte> span = new Span<byte>();
+      span = _buffer.AsSpan();
       while (!end)
-      {
-        _stdIn.Read(_buffer, offset, size);
-        input = Encoding.Default.GetString(_buffer);
-        span = input.AsSpan();
-        int ind = span.IndexOf("\r\n");
-        input = span.Slice(0, ind).ToString();
+      {       
+        ind = span.IndexOfNewLine();
+        if (ind != -1)
+          input = Encoding.Default.GetString(span.Slice(0, ind));
+        else
+          input = Encoding.Default.GetString(span);
+
         if (input == "EXIT()")
         {
           end = true;
           break;
         }
-          
-
         Console.WriteLine(input);
       }
 
