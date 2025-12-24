@@ -34,14 +34,14 @@
 
   public struct LetStatement : Statement
   {
-    public Token token;
-    public Identifier name;
-    public Expression value;
+    public Token Token;
+    public Identifier Name;
+    public Expression Value;
     public LetStatement(Token token, Identifier identifier, Expression expression)
     {
-      this.token = token;
-      this.name = identifier;
-      this.value = expression;
+      this.Token = token;
+      this.Name = identifier;
+      this.Value = expression;
     }
 
     public void StatementNode()
@@ -51,27 +51,27 @@
 
     public string TokenLiteral()
     {
-      return token.Literal;
+      return Token.Literal;
     }
   }
 
   public struct ReturnStatement : Statement
   {
-    public Token token;
-    public Expression returnValue;
-    public ReturnStatement(Token t) => token = t;
+    public Token Token;
+    public Expression ReturnValue;
+    public ReturnStatement(Token t) => Token = t;
     public void StatementNode() => throw new NotImplementedException();
-    public string TokenLiteral() => token.Literal;
+    public string TokenLiteral() => Token.Literal;
   }
   public struct Identifier : Expression
   {
-    public Token token;
-    public string value;
+    public Token Token;
+    public string Value;
 
     public Identifier(Token token, string value)
     {
-      this.token = token;
-      this.value = value;
+      this.Token = token;
+      this.Value = value;
     }
 
     public void ExpressionNode()
@@ -81,7 +81,7 @@
 
     public string TokenLiteral()
     {
-      return token.Literal;
+      return Token.Literal;
     }
   }
 

@@ -64,8 +64,8 @@ namespace Tests
 
       Assert.IsInstanceOfType(s, typeof(LetStatement) ,"Statement is not Let Statement");
       LetStatement letStatement = (LetStatement)s;
-      Assert.AreEqual(name, letStatement.name.value, $"letStatement.name.value not {name}, got {letStatement.name.value}");
-      Assert.AreEqual(name, letStatement.name.TokenLiteral(), $"letStatement.name.TokenLiteral() not {name}, got {letStatement.name.TokenLiteral()}");
+      Assert.AreEqual(name, letStatement.Name.Value, $"letStatement.name.value not {name}, got {letStatement.Name.Value}");
+      Assert.AreEqual(name, letStatement.Name.TokenLiteral(), $"letStatement.name.TokenLiteral() not {name}, got {letStatement.Name.TokenLiteral()}");
     }
 
     public void CheckParserErrors(List<string> errors)

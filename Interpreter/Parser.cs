@@ -56,14 +56,17 @@
 
       return s;
     }
+    
+
+    
     public LetStatement? ParseLetStatement()
     {
       LetStatement s = new LetStatement();
-      s.token = _currToken;
+      s.Token = _currToken;
 
       if (!ExpectPeek(TokenType.IDENT))
           return null;
-      s.name = ParseIdentifier();
+      s.Name = ParseIdentifier();
 
       if (!ExpectPeek(TokenType.ASSIGN))
         return null;
