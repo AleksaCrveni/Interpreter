@@ -41,10 +41,22 @@
       _currToken.Type switch
       {
         TokenType.LET => ParseLetStatement(),
+        TokenType.RETURN => ParseReturnStatement(),
         _ => null
       };
     
-    public Statement? ParseLetStatement()
+
+    public ReturnStatement? ParseReturnStatement()
+    {
+      ReturnStatement s = new ReturnStatement(_currToken);
+      NextToken();
+      //s.returnValue = ParseExpression();
+      while (_currToken.Type != TokenType.SEMICOLON)
+        NextToken();
+
+      return s;
+    }
+    public LetStatement? ParseLetStatement()
     {
       LetStatement s = new LetStatement();
       s.token = _currToken;

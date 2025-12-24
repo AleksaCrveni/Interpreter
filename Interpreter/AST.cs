@@ -55,6 +55,14 @@
     }
   }
 
+  public struct ReturnStatement : Statement
+  {
+    public Token token;
+    public Expression returnValue;
+    public ReturnStatement(Token t) => token = t;
+    public void StatementNode() => throw new NotImplementedException();
+    public string TokenLiteral() => token.Literal;
+  }
   public struct Identifier : Expression
   {
     public Token token;

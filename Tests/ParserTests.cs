@@ -37,6 +37,26 @@ namespace Tests
       Assert.IsTrue(p._errors.Count > 0);
     }
 
+    [TestMethod]
+    public void TestReturnStatementsSuccess()
+    {
+      string input = "return 5;return 10; return 993213;";
+      Lexer l = new Lexer(input);
+      Parser p = new Parser(l);
+
+      Program program = p.ParseProgram();
+      CheckParserErrors(p._errors);
+      if (p._errors.Count > 0)
+        Assert.Fail();
+      Assert.IsNotNull(program, "Parse program returned null!");
+      Assert.AreEqual(3, program._statements.Count, $"Expected 3 statements, got {program._statements.Count}");
+
+      foreach (Statement s in program._statements)
+      {
+        Assert.AreEqual("return", s.TokenLiteral(), $"Statement tokenLiteral is not 'return', got {s.TokenLiteral()}");
+        Assert.IsInstanceOfType(s, typeof(ReturnStatement), "Statement is not ReturnStatement");
+      }
+    }
 
     public void TestLetStatement(Statement s, string name)
     {
