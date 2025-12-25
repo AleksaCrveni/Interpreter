@@ -23,6 +23,8 @@ namespace Interpreter
   {
     public List<Statement> _statements;
 
+    public Program() => _statements = new List<Statement>();
+
     public Program(List<Statement> statements)
     {
       _statements = statements;
@@ -38,7 +40,7 @@ namespace Interpreter
     {
       StringBuilder sb = new StringBuilder();
       foreach (Statement s in _statements)
-        sb.Append(s.TokenLiteral());
+        sb.Append(s.String());
 
       return sb.ToString();
     }
@@ -55,6 +57,7 @@ namespace Interpreter
       this.Name = identifier;
       this.Value = expression;
     }
+   
 
     public void StatementNode()
     {
@@ -88,13 +91,16 @@ namespace Interpreter
     public ReturnStatement(Token t) => Token = t;
     public void StatementNode() => throw new NotImplementedException();
     public string TokenLiteral() => Token.Literal;
-    
+
     public string String()
     {
+      StringBuilder sb = new StringBuilder();
+      sb.Append(TokenLiteral());
+      sb.Append(" ");
       if (ReturnValue != null)
-        return ReturnValue.String();
-
-      return "";
+        sb.Append(ReturnValue.String());
+      sb.Append(";");
+      return sb.ToString();
     }
   }
   public struct Identifier : Expression
