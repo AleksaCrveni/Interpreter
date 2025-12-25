@@ -1,8 +1,12 @@
-﻿namespace Interpreter
+﻿using System.Diagnostics;
+using System.Text;
+
+namespace Interpreter
 {
   public interface ASTNode
   {
     public string TokenLiteral();
+    public string String();
   }
 
   public interface Statement : ASTNode
@@ -30,6 +34,14 @@
       else
         return "";
     }
+    public string String()
+    {
+      StringBuilder sb = new StringBuilder();
+      foreach (Statement s in _statements)
+        sb.Append(s.TokenLiteral());
+
+      return sb.ToString();
+    }
   }
 
   public struct LetStatement : Statement
@@ -53,6 +65,20 @@
     {
       return Token.Literal;
     }
+
+    public string String()
+    {
+      StringBuilder sb = new StringBuilder();
+      sb.Append(TokenLiteral());
+      sb.Append(" ");
+      sb.Append(Name.String());
+      sb.Append(" = ");
+      if (Value != null)
+        sb.Append(Value.String());
+      sb.Append(";");
+
+      return sb.ToString();
+    }
   }
 
   public struct ReturnStatement : Statement
@@ -62,6 +88,14 @@
     public ReturnStatement(Token t) => Token = t;
     public void StatementNode() => throw new NotImplementedException();
     public string TokenLiteral() => Token.Literal;
+    
+    public string String()
+    {
+      if (ReturnValue != null)
+        return ReturnValue.String();
+
+      return "";
+    }
   }
   public struct Identifier : Expression
   {
@@ -82,6 +116,11 @@
     public string TokenLiteral()
     {
       return Token.Literal;
+    }
+
+    public string String()
+    {
+      return Value;
     }
   }
 
