@@ -1,14 +1,14 @@
 ﻿namespace Interpreter
 {
-  public ref struct Lexer
+  public class Lexer
   {
-    private ReadOnlySpan<char> _internal;
+    private char[] _charBuffer;
     private int _position = 0; // current posion
     private int _readPosition = 0; // next position
     private char _char; // current char
     public Lexer(string input)
     {
-      _internal = input.AsSpan();
+      _charBuffer = input.ToCharArray();
       ReadChar();
     }
     
@@ -19,10 +19,10 @@
     
     public void ReadChar()
     {
-      if (_readPosition >= _internal.Length)
+      if (_readPosition >= _charBuffer.Length)
         _char = (char)0;
       else
-        _char = _internal[_readPosition];
+        _char = _charBuffer[_readPosition];
 
       // set curr and go next
       _position = _readPosition++;
@@ -78,13 +78,14 @@
     }
     public Token ReadDoubleCharOperator()
     {
+      ReadOnlySpan<char> buffer = _charBuffer.AsSpan();
       int starter = _position;
       while (_char == '=' || _char == '!')
       {
         ReadChar();
       }
 
-      string literal = _internal.Slice(starter, _position - starter).ToString();
+      string literal = buffer.Slice(starter, _position - starter).ToString();
       return literal switch
       {
         "==" => new Token(TokenType.EQ, literal),
@@ -97,13 +98,14 @@
 
     public Token ReadIdentifier()
     {
+      ReadOnlySpan<char> buffer = _charBuffer.AsSpan();
       int starter = _position;
       while (char.IsLetter(_char) || _char == '_')
       {
         ReadChar();
       }
 
-      string literal = _internal.Slice(starter, _position - starter).ToString();
+      string literal = buffer.Slice(starter, _position - starter).ToString();
       return literal switch
       {
         "let" => new Token(TokenType.LET, literal),
@@ -119,13 +121,14 @@
 
     public Token ReadNumber()
     {
+      ReadOnlySpan<char> buffer = _charBuffer.AsSpan();
       int starter = _position;
       while (char.IsDigit(_char))
       {
         ReadChar();
       }
 
-      string literal = _internal.Slice(starter, _position - starter).ToString();
+      string literal = buffer.Slice(starter, _position - starter).ToString();
       return new Token(TokenType.INT, literal);
     }
 

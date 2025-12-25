@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-
+using Interpreter;
 namespace Tests
 {
   [TestClass]
@@ -77,6 +77,26 @@ namespace Tests
       foreach (string err in errors)
         Trace.WriteLine(err);
       
+    }
+    [TestMethod]
+    public void TestIdentifierExpression()
+    {
+      string input = "foobar";
+      Lexer l = new Lexer(input);
+      Parser p = new Parser(l);
+
+      Program program = p.ParseProgram();
+      CheckParserErrors(p._errors);
+
+      Assert.AreEqual(1, program._statements.Count, $"Program has wrong number of statements, got {program._statements.Count}");
+      Assert.IsInstanceOfType(program._statements[0], typeof(ExpressionStatement), $"Expected ExpressionStatement, got {typeof(ExpressionStatement)}");
+      ExpressionStatement s = (ExpressionStatement)program._statements[0];
+
+      Assert.IsInstanceOfType(s.Expression, typeof(Identifier), $"Expected Identifier, got {typeof(Identifier)}");
+      Identifier i = (Identifier)s.Expression;
+
+      Assert.AreEqual("foobar", i.Value, $"Ident.Value not foobar, got {i.Value}");
+      Assert.AreEqual("foobar", i.TokenLiteral(), $"Ident.TokenLiteral() not foobar, got {i.TokenLiteral()}");
     }
   }
 }

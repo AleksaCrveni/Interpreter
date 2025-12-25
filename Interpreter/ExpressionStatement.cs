@@ -34,8 +34,12 @@
   /// </summary>
   public struct ExpressionStatement : Statement
   {
-    Token Token;
-    Expression Expression;
+    public Token Token;
+    public Expression Expression;
+
+    public ExpressionStatement(Token t) => Token = t;
+
+
     public void StatementNode() => throw new NotImplementedException();
     public string TokenLiteral() => Token.Literal;
     public string String()
