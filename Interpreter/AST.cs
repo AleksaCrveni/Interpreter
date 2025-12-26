@@ -129,4 +129,25 @@ namespace Interpreter
     }
   }
 
+  public struct IntegerLiteral : Expression
+  {
+    public Token Token;
+    public long Value;
+
+    public void ExpressionNode()
+    {
+      throw new NotImplementedException();
+    }
+
+    public string String()
+    {
+      return TokenLiteral();
+    }
+
+    public string TokenLiteral()
+    {
+      return Token.Literal;
+    }
+  }
+
 }

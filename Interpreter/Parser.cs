@@ -38,6 +38,7 @@ namespace Interpreter
     {
       // Prefixes
       RegisterPrefix(TokenType.IDENT, ParseIdentifierAsExpression);
+      RegisterPrefix(TokenType.INT, ParseIntegerLiteral);
     }
     public void NextToken()
     {
@@ -124,7 +125,15 @@ namespace Interpreter
     {
       return new Identifier(_currToken, _currToken.Literal);
     }
-
+    public Expression ParseIntegerLiteral()
+    {
+      IntegerLiteral e = new IntegerLiteral();
+      e.Token = _currToken;
+      bool isNum = long.TryParse(_currToken.Literal, out e.Value);
+      if (!isNum)
+        return null;
+      return e;
+    }
     public bool ExpectPeek(TokenType t)
     {
       if (_peekToken.Type == t)

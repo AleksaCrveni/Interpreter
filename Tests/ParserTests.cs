@@ -98,5 +98,24 @@ namespace Tests
       Assert.AreEqual("foobar", i.Value, $"Ident.Value not foobar, got {i.Value}");
       Assert.AreEqual("foobar", i.TokenLiteral(), $"Ident.TokenLiteral() not foobar, got {i.TokenLiteral()}");
     }
+    [TestMethod]
+    public void TextIntLiteralExpression()
+    {
+      string input = "5;";
+      Lexer l = new Lexer(input);
+      Parser p = new Parser(l);
+
+      Program program = p.ParseProgram();
+      CheckParserErrors(p._errors);
+
+      Assert.AreEqual(1, program._statements.Count, $"Program has wrong number of statements, got {program._statements.Count}");
+      Assert.IsInstanceOfType(program._statements[0], typeof(ExpressionStatement), $"Expected ExpressionStatement, got {typeof(ExpressionStatement)}");
+      ExpressionStatement s = (ExpressionStatement)program._statements[0];
+
+      Assert.IsInstanceOfType(s.Expression, typeof(IntegerLiteral), $"Expected IntegerLiteral, got {typeof(IntegerLiteral)}");
+      IntegerLiteral i = (IntegerLiteral)s.Expression;
+      Assert.AreEqual(5, i.Value, $"Ident.Value not 5, got {i.Value}");
+      Assert.AreEqual("5", i.TokenLiteral(), $"Ident.TokenLiteral() not 5, got {i.TokenLiteral()}");
+    }
   }
 }
