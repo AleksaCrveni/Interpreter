@@ -149,5 +149,27 @@ namespace Interpreter
       return Token.Literal;
     }
   }
+  public struct PrefixExpression : Expression
+  {
+    public Token Token;
+    public string Operator;
+    public Expression Right;
+    public void ExpressionNode()
+    {
+      throw new NotImplementedException();
+    }
 
+    public string String()
+    {
+      StringBuilder sb = new StringBuilder();
+      sb.Append('(');
+      sb.Append(Operator);
+      sb.Append(Right.String());
+      sb.Append(')');
+
+      return sb.ToString();
+    }
+
+    public string TokenLiteral() => Token.Literal;
+  }
 }

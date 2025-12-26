@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using Interpreter;
 namespace Tests
 {
   [TestClass]
@@ -114,8 +113,62 @@ namespace Tests
 
       Assert.IsInstanceOfType(s.Expression, typeof(IntegerLiteral), $"Expected IntegerLiteral, got {typeof(IntegerLiteral)}");
       IntegerLiteral i = (IntegerLiteral)s.Expression;
-      Assert.AreEqual(5, i.Value, $"Ident.Value not 5, got {i.Value}");
-      Assert.AreEqual("5", i.TokenLiteral(), $"Ident.TokenLiteral() not 5, got {i.TokenLiteral()}");
+      Assert.AreEqual(5, i.Value, $"IntegerLiteral.Value not 5, got {i.Value}");
+      Assert.AreEqual("5", i.TokenLiteral(), $"IntegerLiteral.TokenLiteral() not 5, got {i.TokenLiteral()}");
+    }
+
+    struct PrefixTest
+    {
+      public string Input;
+      public string Operator;
+      public long IntegerValue;
+    }
+    [TestMethod]
+    public void TestPrefixExpression()
+    {
+      // <prefix operator><expression>
+      PrefixTest[] tests =
+        [
+          new PrefixTest() {
+            Input = "!5;",
+            Operator = "!",
+            IntegerValue = 5
+          },
+          new PrefixTest() {
+            Input = "-15;",
+            Operator = "-",
+            IntegerValue = 15
+          }
+        ];
+
+      foreach (PrefixTest t in tests)
+      {
+        Lexer l = new Lexer(t.Input);
+        Parser p = new Parser(l);
+
+        Interpreter.Program program = p.ParseProgram();
+        CheckParserErrors(p._errors);
+
+        Assert.AreEqual(1, program._statements.Count, $"Program has wrong number of statements, got {program._statements.Count}");
+        Assert.IsInstanceOfType(program._statements[0], typeof(ExpressionStatement), $"Expected ExpressionStatement, got {typeof(ExpressionStatement)}");
+        ExpressionStatement s = (ExpressionStatement)program._statements[0];
+
+        Assert.IsInstanceOfType(s.Expression, typeof(PrefixExpression), $"Expected PrefixExpression, got {typeof(PrefixExpression)}");
+        PrefixExpression i = (PrefixExpression)s.Expression;
+
+        
+        Assert.AreEqual(t.Operator, i.Operator, $"Operator not {t.Operator}, got {i.Operator}");
+        TestIntegerLiteral(i.Right, t.IntegerValue);
+
+      }
+    }
+
+    public void TestIntegerLiteral(Expression right, long value)
+    {
+      Assert.IsInstanceOfType(right, typeof(IntegerLiteral), $"Expected IntegerLiteral, got {typeof(IntegerLiteral)}");
+      IntegerLiteral i = (IntegerLiteral)right;
+      Assert.AreEqual(value, i.Value, $"IntegerLiteral.Value not {value}, got {i.Value}");
+      Assert.AreEqual(value.ToString(), i.TokenLiteral(), $"IntegerLiteral.TokenLiteral not {value}, got {i.TokenLiteral()}");
     }
   }
 }

@@ -39,7 +39,10 @@ namespace Interpreter
       // Prefixes
       RegisterPrefix(TokenType.IDENT, ParseIdentifierAsExpression);
       RegisterPrefix(TokenType.INT, ParseIntegerLiteral);
+      RegisterPrefix(TokenType.BANG, ParsePrefixExpression);
+      RegisterPrefix(TokenType.MINUS, ParsePrefixExpression);
     }
+
     public void NextToken()
     {
       _currToken = _peekToken;
@@ -83,7 +86,10 @@ namespace Interpreter
     {
       Func<Expression>? func = _prefixParseFns.GetValueOrDefault(_currToken.Type, null);
       if (func == null)
+      {
+        LogNoPrefixParseError(_currToken.Type);
         return null;
+      }
 
       Expression leftExp = func();
       return leftExp;
@@ -134,6 +140,16 @@ namespace Interpreter
         return null;
       return e;
     }
+    public Expression ParsePrefixExpression()
+    {
+      PrefixExpression e = new PrefixExpression();
+      e.Token = _currToken;
+      e.Operator = _currToken.Literal;
+
+      NextToken();
+      e.Right = ParseExpression(PRECENDECES.PREFIX);
+      return e;
+    }
     public bool ExpectPeek(TokenType t)
     {
       if (_peekToken.Type == t)
@@ -149,6 +165,7 @@ namespace Interpreter
     }
 
     public void LogPeekError(TokenType t) => _errors.Add($"Expected next token type to be {t}, got {_peekToken.Type}");
+    public void LogNoPrefixParseError(TokenType t) => _errors.Add($"No prefix parse function for {t} found");
     public void RegisterPrefix(TokenType type, Func<Expression> func) => _prefixParseFns.Add(type, func);
     public void RegsiterInfix(TokenType type, Func<Expression, Expression> func) => _infixParseFns.Add(type, func);
   }
