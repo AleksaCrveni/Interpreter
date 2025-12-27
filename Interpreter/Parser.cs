@@ -9,6 +9,7 @@ namespace Interpreter
     public List<string> _errors;
     public Dictionary<TokenType, Func<Expression>> _prefixParseFns;
     public Dictionary<TokenType, Func<Expression, Expression>> _infixParseFns;
+    public Dictionary<TokenType, PRECENDECES> _precedenceMap;
     public enum PRECENDECES
     {
       LOWEST,
@@ -19,6 +20,7 @@ namespace Interpreter
       PREFIX, // -X or IX
       CALL // myFunction(X)
     }
+    
 
     public Parser(Lexer l)
     {
@@ -32,6 +34,17 @@ namespace Interpreter
 
       _prefixParseFns = new Dictionary<TokenType, Func<Expression>>();
       _infixParseFns = new Dictionary<TokenType, Func<Expression, Expression>>();
+      _precedenceMap = new Dictionary<TokenType, PRECENDECES>()
+      {
+        {TokenType.EQ, PRECENDECES.EQUALS },
+        {TokenType.NOT_EQ, PRECENDECES.EQUALS },
+        {TokenType.LT, PRECENDECES.LESSGREATER },
+        {TokenType.GT, PRECENDECES.LESSGREATER },
+        {TokenType.PLUS, PRECENDECES.SUM },
+        {TokenType.MINUS, PRECENDECES.SUM },
+        {TokenType.SLASH, PRECENDECES.PRODUCT },
+        {TokenType.ASTERISK, PRECENDECES.PRODUCT }
+      };
       RegisterFunctions();
     }
     public void RegisterFunctions()
@@ -41,6 +54,17 @@ namespace Interpreter
       RegisterPrefix(TokenType.INT, ParseIntegerLiteral);
       RegisterPrefix(TokenType.BANG, ParsePrefixExpression);
       RegisterPrefix(TokenType.MINUS, ParsePrefixExpression);
+
+      // Infix
+      RegisterInfix(TokenType.PLUS, ParseInfixExpression);
+      RegisterInfix(TokenType.MINUS, ParseInfixExpression);
+      RegisterInfix(TokenType.SLASH, ParseInfixExpression);
+      RegisterInfix(TokenType.ASTERISK, ParseInfixExpression);
+      RegisterInfix(TokenType.EQ, ParseInfixExpression);
+      RegisterInfix(TokenType.NOT_EQ, ParseInfixExpression);
+      RegisterInfix(TokenType.LT, ParseInfixExpression);
+      RegisterInfix(TokenType.GT, ParseInfixExpression);
+
     }
 
     public void NextToken()
@@ -92,6 +116,16 @@ namespace Interpreter
       }
 
       Expression leftExp = func();
+      if (_peekToken.Type != TokenType.SEMICOLON && precendece < PeekPrecedence())
+      {
+        Func<Expression, Expression>? infixFunc = _infixParseFns.GetValueOrDefault(_peekToken.Type, null);
+        if (infixFunc == null)
+          return leftExp;
+
+        NextToken();
+        leftExp = infixFunc(leftExp);
+      }
+
       return leftExp;
     }
 
@@ -150,6 +184,17 @@ namespace Interpreter
       e.Right = ParseExpression(PRECENDECES.PREFIX);
       return e;
     }
+
+    public Expression ParseInfixExpression(Expression left)
+    {
+      InfixExpression expression = new InfixExpression(_currToken, left, null, _currToken.Literal);
+      PRECENDECES p = CurrPrecedence();
+      NextToken();
+      expression.Right = ParseExpression(p);
+
+      return expression;
+    }
+
     public bool ExpectPeek(TokenType t)
     {
       if (_peekToken.Type == t)
@@ -163,10 +208,11 @@ namespace Interpreter
         return false;
       }
     }
-
+    public PRECENDECES CurrPrecedence() => _precedenceMap.GetValueOrDefault(_currToken.Type, PRECENDECES.LOWEST);
+    public PRECENDECES PeekPrecedence() => _precedenceMap.GetValueOrDefault(_peekToken.Type, PRECENDECES.LOWEST);
     public void LogPeekError(TokenType t) => _errors.Add($"Expected next token type to be {t}, got {_peekToken.Type}");
     public void LogNoPrefixParseError(TokenType t) => _errors.Add($"No prefix parse function for {t} found");
     public void RegisterPrefix(TokenType type, Func<Expression> func) => _prefixParseFns.Add(type, func);
-    public void RegsiterInfix(TokenType type, Func<Expression, Expression> func) => _infixParseFns.Add(type, func);
+    public void RegisterInfix(TokenType type, Func<Expression, Expression> func) => _infixParseFns.Add(type, func);
   }
 }

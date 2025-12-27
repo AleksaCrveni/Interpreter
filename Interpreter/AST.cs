@@ -172,4 +172,42 @@ namespace Interpreter
 
     public string TokenLiteral() => Token.Literal;
   }
+
+  public struct InfixExpression : Expression
+  {
+    public Token Token;
+    public Expression Left;
+    public Expression Right;
+    public string Operator;
+
+    public InfixExpression(Token t, Expression l, Expression r, string o)
+    {
+      Token = t;
+      Left = l;
+      Right = r;
+      Operator = o;
+    }
+
+    // <expression><infix operator><expression>
+    public void ExpressionNode()
+    {
+      throw new NotImplementedException();
+    }
+
+    public string String()
+    {
+      StringBuilder sb = new StringBuilder();
+      sb.Append('(');
+      sb.Append(Left.String());
+      sb.Append(" ");
+      sb.Append(Operator);
+      sb.Append(" ");
+      sb.Append(Right.String());
+      sb.Append(')');
+
+      return sb.ToString();
+    }
+
+    public string TokenLiteral() => Token.Literal;
+  }
 }

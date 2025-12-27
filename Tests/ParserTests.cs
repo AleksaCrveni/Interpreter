@@ -170,5 +170,60 @@ namespace Tests
       Assert.AreEqual(value, i.Value, $"IntegerLiteral.Value not {value}, got {i.Value}");
       Assert.AreEqual(value.ToString(), i.TokenLiteral(), $"IntegerLiteral.TokenLiteral not {value}, got {i.TokenLiteral()}");
     }
+
+    struct InfixTest
+    {
+      public InfixTest(string i, long lv, string op, long rv)
+      {
+        Input = i;
+        LeftValue = lv;
+        Operator = op;
+        RightValue = rv;
+      }
+
+      public string Input;
+      public long LeftValue;
+      public string Operator;
+      public long RightValue;
+    }
+    [TestMethod]
+    public void TestInfixExpressions()
+    {
+      InfixTest[] tests =
+        [
+          new InfixTest("5 + 5;", 5, "+", 5),
+          new InfixTest("5 - 5;", 5, "-", 5),
+          new InfixTest("5 * 5;", 5, "*", 5),
+          new InfixTest("5 / 5;", 5, "/", 5),
+          new InfixTest("5 > 5;", 5, ">", 5),
+          new InfixTest("5 < 5;", 5, "<", 5),
+          new InfixTest("5 == 5;", 5, "==", 5),
+          new InfixTest("5 != 5;", 5, "!=", 5),
+        ];
+
+
+      foreach (InfixTest t in tests)
+      {
+        Lexer l = new Lexer(t.Input);
+        Parser p = new Parser(l);
+
+        Program program = p.ParseProgram();
+        CheckParserErrors(p._errors);
+
+        Assert.AreEqual(1, program._statements.Count, $"Program has wrong number of statements, got {program._statements.Count}");
+        Assert.IsInstanceOfType(program._statements[0], typeof(ExpressionStatement), $"Expected ExpressionStatement, got {typeof(ExpressionStatement)}");
+        ExpressionStatement s = (ExpressionStatement)program._statements[0];
+
+        Assert.IsInstanceOfType(s.Expression, typeof(InfixExpression), $"Expected InfixExpression, got {typeof(InfixExpression)}");
+        InfixExpression i = (InfixExpression)s.Expression;
+
+
+        Assert.AreEqual(t.Operator, i.Operator, $"Operator not {t.Operator}, got {i.Operator}");
+        TestIntegerLiteral(i.Left, t.LeftValue);
+        TestIntegerLiteral(i.Right, t.RightValue);
+
+      }
+    }
+
   }
 }
