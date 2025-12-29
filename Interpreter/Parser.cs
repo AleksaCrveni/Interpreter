@@ -54,7 +54,6 @@ namespace Interpreter
       RegisterPrefix(TokenType.INT, ParseIntegerLiteral);
       RegisterPrefix(TokenType.BANG, ParsePrefixExpression);
       RegisterPrefix(TokenType.MINUS, ParsePrefixExpression);
-
       // Infix
       RegisterInfix(TokenType.PLUS, ParseInfixExpression);
       RegisterInfix(TokenType.MINUS, ParseInfixExpression);
@@ -116,7 +115,7 @@ namespace Interpreter
       }
 
       Expression leftExp = func();
-      if (_peekToken.Type != TokenType.SEMICOLON && precendece < PeekPrecedence())
+      while (_peekToken.Type != TokenType.SEMICOLON && precendece < PeekPrecedence())
       {
         Func<Expression, Expression>? infixFunc = _infixParseFns.GetValueOrDefault(_peekToken.Type, null);
         if (infixFunc == null)

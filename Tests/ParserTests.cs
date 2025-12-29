@@ -225,5 +225,47 @@ namespace Tests
       }
     }
 
+    struct OperatorPrecedenceTests
+    {
+      public OperatorPrecedenceTests(string i, string e)
+      {
+        Input = i;
+        Expected = e;
+      }
+
+      public string Input;
+      public string Expected;
+    }
+    [TestMethod]
+    public void TestOperatorPrecedence()
+    {
+      OperatorPrecedenceTests[] tests =
+      [
+        new OperatorPrecedenceTests("-a * b", "((-a) * b)"),
+        new OperatorPrecedenceTests("!-a", "(!(-a))"),
+        new OperatorPrecedenceTests("a + b + c", "((a + b) + c)"),
+        new OperatorPrecedenceTests("a + b - c", "((a + b) - c)"),
+        new OperatorPrecedenceTests("a * b * c", "((a * b) * c)"),
+        new OperatorPrecedenceTests("a * b / c", "((a * b) / c)"),
+        new OperatorPrecedenceTests("a + b / c", "(a + (b / c))"),
+        new OperatorPrecedenceTests("a + b * c + d / e - f", "(((a + (b * c)) + (d / e)) - f)"),
+        new OperatorPrecedenceTests("3 + 4; -5 * 5", "(3 + 4)((-5) * 5)"),
+        new OperatorPrecedenceTests("5 > 4 == 3 < 4", "((5 > 4) == (3 < 4))"),
+        new OperatorPrecedenceTests("5 < 4 != 3 > 4", "((5 < 4) != (3 > 4))"),
+        new OperatorPrecedenceTests("3 + 4 * 5 == 3 * 1 + 4 * 5", "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))"),
+      ];
+
+      foreach (OperatorPrecedenceTests t in tests)
+      {
+        Lexer l = new Lexer(t.Input);
+        Parser p = new Parser(l);
+
+        Program program = p.ParseProgram();
+        CheckParserErrors(p._errors);
+
+        string actual = program.String();
+        Assert.AreEqual(t.Expected, actual, $"Expected {t.Expected}, got {actual}");
+      }
+    }
   }
 }
